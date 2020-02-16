@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 final List<String> placeholderlist = [
@@ -31,26 +33,38 @@ final List<String> placeholderlist = [
   'Nilso'
 ];
 
+final List<String> placeholderdrinklist = [
+  'Zäpfle',
+  'Waldhaus',
+  'Paulaner',
+  'Glühwein',
+  'Apfelschorli',
+  'Radler',
+  'Obstler'
+];
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Drinklist',
         theme: ThemeData(
           primaryColor: Colors.white,
+          accentColor: Colors.blueAccent,
+          textTheme: TextTheme(bodyText1: TextStyle(fontSize: 20.0)),
         ),
         home: Scaffold(
             appBar: AppBar(
               title: Text(
                 "Getränkeliste",
                 style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w400,
                     color: Colors.black87),
-              ),centerTitle: true,
+              ),
+              centerTitle: true,
             ),
             body: Row(
               children: [
@@ -59,16 +73,11 @@ class MyApp extends StatelessWidget {
                     flex: 2,
                     child: Column(
                       children: <Widget>[
-                        Expanded(
-                            flex: 3,
-                            child: Container(
-                                color: Colors.grey,
-                                child: Center(child: Text("PersonDetails")))),
+                        Expanded(flex: 3, child: Detailview()),
                         Expanded(
                             flex: 2,
-                            child: Container(
-                                color: Colors.blue,
-                                child: Center(child: Text("DrinkPicker")))),
+                            child:
+                                Container(child: Center(child: DrinkList()))),
                       ],
                     )),
               ],
@@ -86,6 +95,7 @@ class _NameListState extends State<NameList> {
   Widget build(BuildContext context) {
     return Container(
       child: ListView.builder(
+        physics: ClampingScrollPhysics(),
         itemCount: placeholderlist.length,
         itemBuilder: (context, i) {
           return ListTile(
@@ -101,5 +111,105 @@ class _NameListState extends State<NameList> {
         },
       ),
     );
+  }
+}
+
+class DrinkList extends StatefulWidget {
+  @override
+  _DrinkListState createState() => _DrinkListState();
+}
+
+class _DrinkListState extends State<DrinkList> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: ListView.builder(
+      padding: EdgeInsets.all(0),
+      physics: ClampingScrollPhysics(),
+      shrinkWrap: true,
+      scrollDirection: Axis.horizontal,
+      itemCount: placeholderdrinklist.length,
+      itemBuilder: (BuildContext context, int index) => Card(
+        child: Center(
+            child: Container(
+          child: Center(child: Image.asset('assets/rothaus.png')),
+          padding: EdgeInsets.all(20),
+          width: 200,
+        )),
+        margin: EdgeInsets.all(20),
+      ),
+    ));
+  }
+}
+
+class Detailview extends StatefulWidget {
+  @override
+  _DetailviewState createState() => _DetailviewState();
+}
+
+class _DetailviewState extends State<Detailview> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      children: <Widget>[
+        Expanded(
+            flex: 2,
+            child: Row(children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(20),
+                  child: Center(
+                      child: CircleAvatar(
+                    backgroundColor: Colors.grey.shade800,
+                    child: Text('KE',
+                        style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white)),
+                    radius: 50,
+                  ))),
+              Container(
+                  padding: EdgeInsets.all(20),
+                  child: Center(
+                      child: Text(
+                    "Koni E.",
+                    style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87),
+                  ))),
+              Expanded(
+                  child: Container(
+                padding: EdgeInsets.all(20),
+                child: Text(
+                  "42€",
+                  style: TextStyle(
+                      fontSize: 80,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87),
+                ),
+                alignment: Alignment(1, 0),
+              ))
+            ])),
+        Expanded(
+          flex: 3,
+          child: Container(
+              child: DataTable(
+            columns: [
+              DataColumn(label: Text('Getränk')),
+              DataColumn(label: Text('Anzahl'))
+            ],
+            rows: [
+              DataRow(cells: [DataCell(Text('Zäpfle')), DataCell(Text('20'))]),
+              DataRow(cells: [DataCell(Text('Radler')), DataCell(Text('13'))]),
+              DataRow(cells: [DataCell(Text('Glühwiii')), DataCell(Text('2'))]),
+              DataRow(
+                  cells: [DataCell(Text('Wurschtwasr')), DataCell(Text('1'))])
+            ],
+            columnSpacing: 600,
+          )),
+        )
+      ],
+    ));
   }
 }
