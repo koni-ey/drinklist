@@ -1,0 +1,32 @@
+[
+    {
+        "id": "1",
+        "displayName": "Tom",
+        "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        "total": "1"
+    },
+    {
+        "id": "2",
+        "displayName": "Tim P.",
+        "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        "total": "5"
+    },
+    {
+        "id": "3",
+        "displayName": "Hans W.",
+        "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        "total": "20"
+    },
+    {
+        "id": "4",
+        "displayName": "Jan P. Illeman",
+        "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        "total": "20"
+    },
+    {
+        "id": "5",
+        "displayName": "Huri",
+        "photo": "https://jsonformatter.org/img/tom-cruise.jpg",
+        "total": "20"
+    }
+]

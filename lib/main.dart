@@ -1,37 +1,37 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'jsonparse.dart';
+import 'name.dart';
 
-final List<String> placeholderlist = [
-  'Lel S.',
-  'Rofl P.',
-  'Timmi',
-  'Koni',
-  'Dario',
-  'Phipsi',
-  'Nilso',
-  'Lel S.',
-  'Rofl P.',
-  'Timmi',
-  'Koni',
-  'Dario',
-  'Phipsi',
-  'Nilso',
-  'Lel S.',
-  'Rofl P.',
-  'Timmi',
-  'Koni',
-  'Dario',
-  'Phipsi',
-  'Nilso',
-  'Lel S.',
-  'Rofl P.',
-  'Timmi',
-  'Koni',
-  'Dario',
-  'Phipsi',
-  'Nilso'
+Detailview mydetailview = Detailview();
+
+List<Drink> testilisti = [Drink("Zäpfle", 1, 12), Drink("waldi", 2, 322)];
+
+Name koni = Name("Koni Ey", 31, testilisti);
+Name timi = Name("Timi M", 433, testilisti);
+Name tsdmi = Name("Timi 2", 433, testilisti);
+Name lulimi = Name("Timi 5", 433, testilisti);
+Name sackmi = Name("huhu", 433, testilisti);
+Name tlimi = Name("sacki", 433, testilisti);
+Name tomi = Name("Timi M", 433, testilisti);
+Name tami = Name("Timi M", 433, testilisti);
+Name huhu = Name("HUHUHUHU", 433, testilisti);
+
+List<Name> namelist = [
+  koni,
+  timi,
+  tsdmi,
+  lulimi,
+  sackmi,
+  tlimi,
+  tomi,
+  tami,
+  huhu
 ];
+
+Name selectedName = timi;
 
 final List<String> placeholderdrinklist = [
   'Zäpfle',
@@ -43,9 +43,20 @@ final List<String> placeholderdrinklist = [
   'Obstler'
 ];
 
+final TextStyle tabletext =
+    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black);
+
+final TextStyle tablehead =
+    TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black54);
+
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -57,12 +68,18 @@ class MyApp extends StatelessWidget {
         ),
         home: Scaffold(
             appBar: AppBar(
-              title: Text(
-                "Getränkeliste",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black87),
+              title: Row(
+                children: <Widget>[
+                  Expanded(
+                      child: Center(
+                          child: Text(
+                    "Getränkeliste",
+                    style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.black87),
+                  ))),
+                ],
               ),
               centerTitle: true,
             ),
@@ -94,23 +111,23 @@ class _NameListState extends State<NameList> {
   @override
   Widget build(BuildContext context) {
     return Container(
+        child: Scrollbar(
       child: ListView.builder(
-        physics: ClampingScrollPhysics(),
-        itemCount: placeholderlist.length,
-        itemBuilder: (context, i) {
-          return ListTile(
-            title: Text(
-              placeholderlist[i],
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black54),
-            ),
-            trailing: Icon(Icons.favorite_border),
-          );
-        },
-      ),
-    );
+          itemBuilder: ((BuildContext context, int index) {
+            return ListTile(
+              title: Text(namelist[index].displayname,
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87)),
+              trailing: Icon(Icons.favorite_border),
+              onTap: () {
+              
+              },
+            );
+          }),
+          itemCount: namelist.length),
+    ));
   }
 }
 
@@ -148,6 +165,8 @@ class Detailview extends StatefulWidget {
 }
 
 class _DetailviewState extends State<Detailview> {
+  Name currentName = koni;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -172,7 +191,7 @@ class _DetailviewState extends State<Detailview> {
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child: Text(
-                    "Koni E.",
+                    this.currentName.displayname,
                     style: TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.w700,
@@ -182,13 +201,14 @@ class _DetailviewState extends State<Detailview> {
                   child: Container(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  "42€",
+                  this.currentName.total.toString(),
                   style: TextStyle(
                       fontSize: 80,
                       fontWeight: FontWeight.w700,
                       color: Colors.black87),
                 ),
                 alignment: Alignment(1, 0),
+                margin: EdgeInsets.all(20),
               ))
             ])),
         Expanded(
@@ -196,15 +216,52 @@ class _DetailviewState extends State<Detailview> {
           child: Container(
               child: DataTable(
             columns: [
-              DataColumn(label: Text('Getränk')),
-              DataColumn(label: Text('Anzahl'))
+              DataColumn(
+                  label: Text(
+                'Getränk',
+                style: tablehead,
+              )),
+              DataColumn(
+                  label: Text(
+                'Anzahl',
+                style: tablehead,
+              ))
             ],
             rows: [
-              DataRow(cells: [DataCell(Text('Zäpfle')), DataCell(Text('20'))]),
-              DataRow(cells: [DataCell(Text('Radler')), DataCell(Text('13'))]),
-              DataRow(cells: [DataCell(Text('Glühwiii')), DataCell(Text('2'))]),
-              DataRow(
-                  cells: [DataCell(Text('Wurschtwasr')), DataCell(Text('1'))])
+              DataRow(cells: [
+                DataCell(Text('Zäpfle', style: tabletext)),
+                DataCell(Text(
+                  '20',
+                  style: tabletext,
+                ))
+              ]),
+              DataRow(cells: [
+                DataCell(Text('Radler', style: tabletext)),
+                DataCell(Text(
+                  '13',
+                  style: tabletext,
+                ))
+              ]),
+              DataRow(cells: [
+                DataCell(Text(
+                  'Glühwiii',
+                  style: tabletext,
+                )),
+                DataCell(Text(
+                  '2',
+                  style: tabletext,
+                ))
+              ]),
+              DataRow(cells: [
+                DataCell(Text(
+                  'Wurschtwasr',
+                  style: tabletext,
+                )),
+                DataCell(Text(
+                  '1',
+                  style: tabletext,
+                ))
+              ])
             ],
             columnSpacing: 600,
           )),
