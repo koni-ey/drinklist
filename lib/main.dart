@@ -1,23 +1,20 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'jsonparse.dart';
 import 'name.dart';
 
-Detailview mydetailview = Detailview();
 
-List<Drink> testilisti = [Drink("Zäpfle", 1, 12), Drink("waldi", 2, 322)];
+List<Drink> testilisti = [Drink("Zäpfle", 1, 12), Drink("waldi", 1, 32)];
+List<Drink> testilisti2 = [Drink("Zäpfle", 1, 45), Drink("waldi", 1, 12)];
 
 Name koni = Name("Koni Ey", 31, testilisti);
-Name timi = Name("Timi M", 433, testilisti);
-Name tsdmi = Name("Timi 2", 433, testilisti);
-Name lulimi = Name("Timi 5", 433, testilisti);
-Name sackmi = Name("huhu", 433, testilisti);
-Name tlimi = Name("sacki", 433, testilisti);
-Name tomi = Name("Timi M", 433, testilisti);
-Name tami = Name("Timi M", 433, testilisti);
-Name huhu = Name("HUHUHUHU", 433, testilisti);
+Name timi = Name("Timi M", 43, testilisti2);
+Name tsdmi = Name("Timi 2", 33, testilisti);
+Name lulimi = Name("Timi 5", 3, testilisti);
+Name sackmi = Name("huhu", 3, testilisti);
+Name tlimi = Name("sacki", 4, testilisti);
+Name tomi = Name("Timi M", 33, testilisti);
+Name tami = Name("Timi M", 43, testilisti);
+Name huhu = Name("HUHUHUHU", 33, testilisti);
 
 List<Name> namelist = [
   koni,
@@ -30,8 +27,6 @@ List<Name> namelist = [
   tami,
   huhu
 ];
-
-Name selectedName = timi;
 
 final List<String> placeholderdrinklist = [
   'Zäpfle',
@@ -57,10 +52,11 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Name selectedName = timi;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Drinklist',
+        title: 'Getränkeliste',
         theme: ThemeData(
           primaryColor: Colors.white,
           accentColor: Colors.blueAccent,
@@ -85,12 +81,12 @@ class _MyAppState extends State<MyApp> {
             ),
             body: Row(
               children: [
-                Expanded(flex: 1, child: NameList()),
+                Expanded(flex: 1, child: NameList(this)),
                 Expanded(
                     flex: 2,
                     child: Column(
                       children: <Widget>[
-                        Expanded(flex: 3, child: Detailview()),
+                        Expanded(flex: 3, child: Detailview(selectedName)),
                         Expanded(
                             flex: 2,
                             child:
@@ -103,6 +99,9 @@ class _MyAppState extends State<MyApp> {
 }
 
 class NameList extends StatefulWidget {
+  _MyAppState parent;
+  NameList(this.parent);
+  
   @override
   _NameListState createState() => _NameListState();
 }
@@ -121,7 +120,9 @@ class _NameListState extends State<NameList> {
                       fontWeight: FontWeight.w600,
                       color: Colors.black87)),
               trailing: Icon(Icons.favorite_border),
-              onTap: () {
+              onTap: () { this.widget.parent.setState(() {
+                this.widget.parent.selectedName = namelist[index];
+              });
               
               },
             );
@@ -160,12 +161,13 @@ class _DrinkListState extends State<DrinkList> {
 }
 
 class Detailview extends StatefulWidget {
+  Name currentName;
+  Detailview(this.currentName);
   @override
   _DetailviewState createState() => _DetailviewState();
 }
 
 class _DetailviewState extends State<Detailview> {
-  Name currentName = koni;
 
   @override
   Widget build(BuildContext context) {
@@ -191,7 +193,7 @@ class _DetailviewState extends State<Detailview> {
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child: Text(
-                    this.currentName.displayname,
+                    this.widget.currentName.displayname,
                     style: TextStyle(
                         fontSize: 50,
                         fontWeight: FontWeight.w700,
@@ -201,7 +203,7 @@ class _DetailviewState extends State<Detailview> {
                   child: Container(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  this.currentName.total.toString(),
+                  this.widget.currentName.total.toString(),
                   style: TextStyle(
                       fontSize: 80,
                       fontWeight: FontWeight.w700,
@@ -229,39 +231,19 @@ class _DetailviewState extends State<Detailview> {
             ],
             rows: [
               DataRow(cells: [
-                DataCell(Text('Zäpfle', style: tabletext)),
+                DataCell(Text(this.widget.currentName.consumedDrinks[0].displayName, style: tabletext)),
                 DataCell(Text(
-                  '20',
+                  this.widget.currentName.consumedDrinks[0].consumed.toString(),
                   style: tabletext,
                 ))
               ]),
               DataRow(cells: [
-                DataCell(Text('Radler', style: tabletext)),
+                DataCell(Text(this.widget.currentName.consumedDrinks[1].displayName, style: tabletext)),
                 DataCell(Text(
-                  '13',
+                  this.widget.currentName.consumedDrinks[1].consumed.toString(),
                   style: tabletext,
                 ))
               ]),
-              DataRow(cells: [
-                DataCell(Text(
-                  'Glühwiii',
-                  style: tabletext,
-                )),
-                DataCell(Text(
-                  '2',
-                  style: tabletext,
-                ))
-              ]),
-              DataRow(cells: [
-                DataCell(Text(
-                  'Wurschtwasr',
-                  style: tabletext,
-                )),
-                DataCell(Text(
-                  '1',
-                  style: tabletext,
-                ))
-              ])
             ],
             columnSpacing: 600,
           )),
