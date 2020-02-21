@@ -1,0 +1,27 @@
+[
+    {
+        "displayName": "Waldhaus",
+        "price": "1",
+        "displaypic": "/assets/waldhaus.png"
+    },
+    {
+        "displayName": "Rothaus",
+        "price": "1",
+        "displaypic": "/assets/rothaus.png"
+    },
+    {
+        "displayName": "Radler",
+        "price": "1",
+        "displaypic": "/assets/radler.png"
+    },
+    {
+        "displayName": "Fritz Cola",
+        "price": "1",
+        "displaypic": "/assets/fritz.png"
+    },
+    {
+        "displayName": "Paulaner Spezi",
+        "price": "1",
+        "displaypic": "/assets/paulaner.png"
+    }
+]

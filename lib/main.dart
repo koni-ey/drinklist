@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'name.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-
-List<Drink> testilisti = [Drink("Zäpfle", 1, 12), Drink("waldi", 1, 32)];
-List<Drink> testilisti2 = [Drink("Zäpfle", 1, 45), Drink("waldi", 1, 12)];
+List<Drink> testilisti = [
+  Drink("Zäpfle", 1, 12),
+  Drink("Paulaner Spezi", 1, 5)
+];
+List<Drink> testilisti2 = [
+  Drink("Waldhaus", 1, 31),
+  Drink("Fritz Cola", 1, 12)
+];
 
 Name koni = Name("Koni Ey", 31, testilisti);
 Name timi = Name("Timi M", 43, testilisti2);
@@ -39,10 +45,10 @@ final List<String> placeholderdrinklist = [
 ];
 
 final TextStyle tabletext =
-    TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black);
+    GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black54);
 
 final TextStyle tablehead =
-    TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black54);
+    TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.black45);
 
 void main() => runApp(MyApp());
 
@@ -56,11 +62,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Getränkeliste',
-        theme: ThemeData(
-          primaryColor: Colors.white,
-          accentColor: Colors.blueAccent,
-          textTheme: TextTheme(bodyText1: TextStyle(fontSize: 20.0)),
+        theme: ThemeData(textTheme: GoogleFonts.montserratTextTheme(
+      Theme.of(context).textTheme),
+          primaryColor: Color.fromRGBO(246, 246, 246, 1),
+          accentColor: Colors.white,  
         ),
         home: Scaffold(
             appBar: AppBar(
@@ -77,7 +84,6 @@ class _MyAppState extends State<MyApp> {
                   ))),
                 ],
               ),
-              centerTitle: true,
             ),
             body: Row(
               children: [
@@ -101,7 +107,7 @@ class _MyAppState extends State<MyApp> {
 class NameList extends StatefulWidget {
   _MyAppState parent;
   NameList(this.parent);
-  
+
   @override
   _NameListState createState() => _NameListState();
 }
@@ -110,25 +116,30 @@ class _NameListState extends State<NameList> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Scrollbar(
-      child: ListView.builder(
-          itemBuilder: ((BuildContext context, int index) {
-            return ListTile(
-              title: Text(namelist[index].displayname,
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87)),
-              trailing: Icon(Icons.favorite_border),
-              onTap: () { this.widget.parent.setState(() {
-                this.widget.parent.selectedName = namelist[index];
-              });
-              
-              },
-            );
-          }),
-          itemCount: namelist.length),
-    ));
+      child: Scrollbar(
+        child: ListView.builder(
+            itemBuilder: ((BuildContext context, int index) {
+              return ListTile(
+                title: Text(namelist[index].displayname,
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87)),
+                trailing: Icon(Icons.favorite_border),
+                onTap: () {
+                  this.widget.parent.setState(() {
+                    this.widget.parent.selectedName = namelist[index];
+                  });
+                },
+              );
+            }),
+            itemCount: namelist.length),
+      ),
+      decoration: BoxDecoration(color: Color.fromRGBO(246, 246, 246, 1), boxShadow: [
+        BoxShadow(color: Colors.black12, offset: Offset(10, 10), blurRadius: 10),
+        BoxShadow(color: Colors.white, offset: Offset(-10, -10), blurRadius: 10)
+      ],borderRadius: BorderRadius.all(Radius.circular(20))),margin: EdgeInsets.all(30),
+    );
   }
 }
 
@@ -142,19 +153,23 @@ class _DrinkListState extends State<DrinkList> {
   Widget build(BuildContext context) {
     return Container(
         child: ListView.builder(
-      padding: EdgeInsets.all(0),
+      padding: EdgeInsets.all(20),
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
       scrollDirection: Axis.horizontal,
       itemCount: placeholderdrinklist.length,
-      itemBuilder: (BuildContext context, int index) => Card(
+      itemBuilder: (BuildContext context, int index) => Container(
         child: Center(
             child: Container(
           child: Center(child: Image.asset('assets/rothaus.png')),
-          padding: EdgeInsets.all(20),
-          width: 200,
+          padding: EdgeInsets.all(10),
+          width: 200,margin: EdgeInsets.all(20)
         )),
-        margin: EdgeInsets.all(20),
+        margin: EdgeInsets.all(20), 
+      decoration: BoxDecoration(color: Color.fromRGBO(246, 246, 246, 1), boxShadow: [
+        BoxShadow(color: Colors.black12, offset: Offset(10, 10), blurRadius: 10),
+        BoxShadow(color: Colors.white, offset: Offset(-10, -10), blurRadius: 10)
+      ],borderRadius: BorderRadius.all(Radius.circular(20)),),
       ),
     ));
   }
@@ -168,7 +183,6 @@ class Detailview extends StatefulWidget {
 }
 
 class _DetailviewState extends State<Detailview> {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -181,22 +195,24 @@ class _DetailviewState extends State<Detailview> {
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child: CircleAvatar(
-                    backgroundColor: Colors.grey.shade800,
-                    child: Text('KE',
+                    backgroundColor: Colors.grey.shade600,
+                    child: Text(
+                        this.widget.currentName.displayname.substring(0, 1),
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
                             color: Colors.white)),
                     radius: 50,
+                    
                   ))),
               Container(
                   padding: EdgeInsets.all(20),
                   child: Center(
                       child: Text(
                     this.widget.currentName.displayname,
-                    style: TextStyle(
+                    style: GoogleFonts.montserrat(
                         fontSize: 50,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: Colors.black87),
                   ))),
               Expanded(
@@ -205,8 +221,8 @@ class _DetailviewState extends State<Detailview> {
                 child: Text(
                   this.widget.currentName.total.toString(),
                   style: TextStyle(
-                      fontSize: 80,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 50,
+                      fontWeight: FontWeight.w600,
                       color: Colors.black87),
                 ),
                 alignment: Alignment(1, 0),
@@ -231,16 +247,20 @@ class _DetailviewState extends State<Detailview> {
             ],
             rows: [
               DataRow(cells: [
-                DataCell(Text(this.widget.currentName.consumedDrinks[0].displayName, style: tabletext)),
                 DataCell(Text(
-                  this.widget.currentName.consumedDrinks[0].consumed.toString(),
+                    this.widget.currentName.consumedDrinks[0].displayName,
+                    style: tabletext)),
+                DataCell(Text(
+                  this.widget.currentName.consumedDrinks[0].amount.toString(),
                   style: tabletext,
                 ))
               ]),
               DataRow(cells: [
-                DataCell(Text(this.widget.currentName.consumedDrinks[1].displayName, style: tabletext)),
                 DataCell(Text(
-                  this.widget.currentName.consumedDrinks[1].consumed.toString(),
+                    this.widget.currentName.consumedDrinks[1].displayName,
+                    style: tabletext)),
+                DataCell(Text(
+                  this.widget.currentName.consumedDrinks[1].amount.toString(),
                   style: tabletext,
                 ))
               ]),
