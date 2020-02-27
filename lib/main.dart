@@ -35,6 +35,18 @@ class _MyAppState extends State<MyApp> {
   Future<List<DrinkTypes>> availableDrinks;
   Future<List<Person>> personfuture;
 
+  Widget loadDetailview(Person selectedPerson) {
+    if (selectedPerson != null) {
+      return Detailview(selectedPerson);
+    } else {
+      return Center(
+          child: Text(
+        "Please Tap on list :)",
+        style: pleaseTap,
+      ));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -74,7 +86,7 @@ class _MyAppState extends State<MyApp> {
                 flex: 2,
                 child: Column(
                   children: <Widget>[
-                    Expanded(flex: 2, child: Detailview(selectedPerson)),
+                    Expanded(flex: 2, child: loadDetailview(selectedPerson)),
                     Expanded(
                         flex: 2,
                         child: FutureBuilder<List<DrinkTypes>>(
@@ -198,12 +210,33 @@ class Detailview extends StatefulWidget {
 }
 
 class _DetailviewState extends State<Detailview> {
-  String displayname() {
-    if (this.widget.currentPerson.displayName != null) {
-      return this.widget.currentPerson.displayName.toString();
-    } else {
-      return "Tap on list!!!!!";
+  List<DataRow> generateRows() {
+    List<DataRow> rowlist = [];
+    for (var i = 0;
+        i < this.widget.currentPerson.consumedDrinksByDrinkType.length;
+        i++) {
+      rowlist.add(DataRow(cells: [
+        DataCell(Text(
+            this
+                .widget
+                .currentPerson
+                .consumedDrinksByDrinkType[i]
+                .drinkTypeId
+                .toString(),
+            style: tabletext)),
+        DataCell(Text(
+          this
+              .widget
+              .currentPerson
+              .consumedDrinksByDrinkType[i]
+              .drinkTypeId
+              .toString(),
+          style: tabletext,
+        ))
+      ]));
     }
+
+    return rowlist;
   }
 
   @override
@@ -219,7 +252,8 @@ class _DetailviewState extends State<Detailview> {
                   child: Center(
                       child: CircleAvatar(
                     backgroundColor: Colors.grey.shade600,
-                    child: Text(displayname().substring(0, 1),
+                    child: Text(
+                        this.widget.currentPerson.displayName.substring(0, 1),
                         style: TextStyle(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
@@ -228,7 +262,9 @@ class _DetailviewState extends State<Detailview> {
                   ))),
               Container(
                   padding: EdgeInsets.all(20),
-                  child: Center(child: Text(displayname(), style: detailName))),
+                  child: Center(
+                      child: Text(this.widget.currentPerson.displayName,
+                          style: detailName))),
               Expanded(
                   child: Container(
                 padding: EdgeInsets.all(20),
@@ -256,46 +292,7 @@ class _DetailviewState extends State<Detailview> {
                 style: tablehead,
               ))
             ],
-            rows: [
-              DataRow(cells: [
-                DataCell(Text(
-                    this
-                        .widget
-                        .currentPerson
-                        .consumedDrinksByDrinkType[0]
-                        .drinkTypeId
-                        .toString(),
-                    style: tabletext)),
-                DataCell(Text(
-                  this
-                      .widget
-                      .currentPerson
-                      .consumedDrinksByDrinkType[0]
-                      .consumedDrinkCount
-                      .toString(),
-                  style: tabletext,
-                ))
-              ]),
-              DataRow(cells: [
-                DataCell(Text(
-                    this
-                        .widget
-                        .currentPerson
-                        .consumedDrinksByDrinkType[1]
-                        .drinkTypeId
-                        .toString(),
-                    style: tabletext)),
-                DataCell(Text(
-                  this
-                      .widget
-                      .currentPerson
-                      .consumedDrinksByDrinkType[1]
-                      .drinkTypeId
-                      .toString(),
-                  style: tabletext,
-                ))
-              ]),
-            ],
+            rows: generateRows(),
             columnSpacing: 600,
           )),
         )

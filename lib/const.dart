@@ -8,6 +8,9 @@ final listtext = GoogleFonts.montserrat(
 final detailName = GoogleFonts.montserrat(
     fontSize: 50, fontWeight: FontWeight.w700, color: Colors.black87);
 
+final pleaseTap = GoogleFonts.montserrat(
+    fontSize: 40, fontWeight: FontWeight.w700, color: Colors.black54);
+
 final totalText = GoogleFonts.montserrat(
     fontSize: 50, fontWeight: FontWeight.w700, color: Colors.black87);
 
