@@ -41,7 +41,7 @@ class _MyAppState extends State<MyApp> {
     } else {
       return Center(
           child: Text(
-        "Please Tap on list :)",
+        "Bitte wähle deinen Namen aus :)",
         style: pleaseTap,
       ));
     }
@@ -156,46 +156,41 @@ class _DrinkListState extends State<DrinkList> {
   Widget build(BuildContext context) {
     return Container(
         child: ListView.builder(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(30),
             physics: AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemCount: this.widget.availableDrinks.length,
             itemBuilder: (BuildContext context, int index) => Container(
-                  child: Center(
-                      child: LimitedBox(
-                    child: Column(
-                      children: <Widget>[
-                        FloatingActionButton(
-                          child: Icon(Icons.add),
-                          onPressed: () {
-                            Scaffold.of(context).showSnackBar(snackBar);
-                          },
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Container(
-                            child: Center(
-                              child: Container(
-                                child: Image.asset("assets/" +
-                                    this
-                                        .widget
-                                        .availableDrinks[index]
-                                        .imageName),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Card(
+                    elevation: 0,
+                      color: neoback,
+                      child: Column(
+                        children: <Widget>[
+                          Expanded(
+                            flex: 10,
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              child: Center(
+                                child: Container(
+                                  child: Image.asset("assets/" +
+                                      this
+                                          .widget
+                                          .availableDrinks[index]
+                                          .imageName),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                            flex: 1,
-                            child:
-                                Text(this.widget.availableDrinks[index].label))
-                      ],
-                    ),
-                  )),
-                  margin: EdgeInsets.symmetric(horizontal: 10),
+                          Expanded(
+                              flex: 1,
+                              child: Text(
+                                  this.widget.availableDrinks[index].label))
+                        ],
+                      )),
+                  margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: neodec,
-                  padding: EdgeInsets.all(20),
                   width: 200,
                 )),
         height: 300);
@@ -221,15 +216,14 @@ class _DetailviewState extends State<Detailview> {
                 .widget
                 .currentPerson
                 .consumedDrinksByDrinkType[i]
-                .drinkTypeId
-                .toString(),
+                .drinkTypeLabel,
             style: tabletext)),
         DataCell(Text(
           this
               .widget
               .currentPerson
               .consumedDrinksByDrinkType[i]
-              .drinkTypeId
+              .consumedDrinkCount
               .toString(),
           style: tabletext,
         ))
@@ -279,22 +273,25 @@ class _DetailviewState extends State<Detailview> {
         Expanded(
           flex: 3,
           child: Container(
-              child: DataTable(
-            columns: [
-              DataColumn(
-                  label: Text(
-                'Getränk',
-                style: tablehead,
+              width: 700,
+              child: SingleChildScrollView(
+                child: DataTable(
+                  columns: [
+                    DataColumn(
+                        label: Text(
+                      'Getränk',
+                      style: tablehead,
+                    )),
+                    DataColumn(
+                        label: Text(
+                      'Anzahl',
+                      style: tablehead,
+                    ))
+                  ],
+                  rows: generateRows(),
+                  columnSpacing: 400,
+                ),
               )),
-              DataColumn(
-                  label: Text(
-                'Anzahl',
-                style: tablehead,
-              ))
-            ],
-            rows: generateRows(),
-            columnSpacing: 600,
-          )),
         )
       ],
     ));

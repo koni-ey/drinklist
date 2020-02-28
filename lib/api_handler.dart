@@ -68,18 +68,22 @@ class Person {
 class ConsumedDrinksByDrinkType {
   int drinkTypeId;
   int consumedDrinkCount;
+  String drinkTypeLabel;
 
-  ConsumedDrinksByDrinkType({this.drinkTypeId, this.consumedDrinkCount});
+  ConsumedDrinksByDrinkType(
+      {this.drinkTypeId, this.consumedDrinkCount, this.drinkTypeLabel});
 
   ConsumedDrinksByDrinkType.fromJson(Map<String, dynamic> json) {
     drinkTypeId = json['drinkTypeId'];
     consumedDrinkCount = json['consumedDrinkCount'];
+    drinkTypeLabel = json['drinkTypeLabel'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['drinkTypeId'] = this.drinkTypeId;
     data['consumedDrinkCount'] = this.consumedDrinkCount;
+    data['drinkTypeLabel'] = this.drinkTypeLabel;
     return data;
   }
 }
@@ -119,20 +123,3 @@ Future<List<Person>> fetchPersonList() async {
     throw Exception('Data couldnt be fetched! (Personlist)');
   }
 }
-
-/*
-
-Center(
-          child: FutureBuilder<List<DrinkTypes>>(
-            future: drinkliste,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data[0].label);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              // By default, show a loading spinner.
-              return CircularProgressIndicator();}))
-
-*/
