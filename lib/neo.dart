@@ -11,6 +11,14 @@ BoxDecoration neodec = BoxDecoration(
     ],
     borderRadius: BorderRadius.all(Radius.circular(20)));
 
+BoxDecoration neodecaccent = BoxDecoration(
+    color: Color(0xC104583E),
+    boxShadow: [
+      BoxShadow(color: Colors.black12, offset: Offset(6, 6), blurRadius: 6),
+      BoxShadow(color: Colors.white, offset: Offset(-6, -6), blurRadius: 6)
+    ],
+    borderRadius: BorderRadius.all(Radius.circular(20)));
+
 class NeoButton extends StatelessWidget {
   NeoButton({@required this.onPressed, this.child});
   final Widget child;
@@ -20,7 +28,7 @@ class NeoButton extends StatelessWidget {
       onPressed: onPressed,
       shape: CircleBorder(),
       child: this.child,
-      color: neoback,
+      textColor: Colors.black,
     );
   }
 }

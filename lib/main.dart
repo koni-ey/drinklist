@@ -32,8 +32,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Person selectedPerson;
+  Selections sel = new Selections();
+  String selectiontext = "";
   Future<List<DrinkTypes>> availableDrinks;
   Future<List<Person>> personfuture;
+  bool showSelection = false;
 
   Widget loadDetailview(Person selectedPerson) {
     if (selectedPerson != null) {
@@ -86,14 +89,14 @@ class _MyAppState extends State<MyApp> {
                 flex: 2,
                 child: Column(
                   children: <Widget>[
-                    Expanded(flex: 2, child: loadDetailview(selectedPerson)),
+                    Expanded(flex: 5, child: loadDetailview(selectedPerson)),
                     Expanded(
-                        flex: 2,
+                        flex: 4,
                         child: FutureBuilder<List<DrinkTypes>>(
                             future: availableDrinks,
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                                return DrinkList(snapshot.data);
+                                return DrinkList(snapshot.data, this);
                               } else if (snapshot.hasError) {
                                 return Text("${snapshot.error}");
                               }
@@ -101,6 +104,49 @@ class _MyAppState extends State<MyApp> {
                               // By default, show a loading spinner.
                               return CircularProgressIndicator();
                             })),
+                    AnimatedContainer(
+                        decoration: neodecaccent,
+                        curve: Curves.easeInOut,
+                        margin: showSelection
+                            ? EdgeInsets.only(
+                                left: 0, top: 0, right: 20, bottom: 20)
+                            : EdgeInsets.all(0),
+                        padding: EdgeInsets.all(7),
+                        height: showSelection ? 85 : 0,
+                        width: double.infinity,
+                        duration: Duration(milliseconds: 300),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                                flex: 12,
+                                child: ListView(
+                                    children:<Widget>[Text("Auswahl",style: selectionHead),
+                                      Text("" + sel.getSelections(),
+                                        style: selectionText)])),
+                            Expanded(
+                              flex: 1,
+                              child: FlatButton(
+                                  onPressed: () {
+                                    this.setState(() {
+                                      sel.discardSelection();
+                                      showSelection = false;
+                                    });
+                                  },
+                                  child: Icon(Icons.do_not_disturb)),
+                            ),
+                            Expanded(
+                                flex: 1,
+                                child: NeoButton(
+                                  child: Icon(Icons.check),
+                                  onPressed: () {
+                                    this.setState(() {
+                                      sel.applySelection();
+                                      showSelection = false;
+                                    });
+                                  },
+                                )),
+                          ],
+                        )),
                   ],
                 )),
           ],
@@ -127,7 +173,7 @@ class _NameListState extends State<NameList> {
               return ListTile(
                 title: Text(this.widget.personlist[index].displayName,
                     style: listtext),
-                trailing: Icon(Icons.local_drink),
+                trailing: Icon(Icons.favorite_border),
                 onTap: () {
                   this.widget.parent.setState(() {
                     this.widget.parent.selectedPerson =
@@ -139,14 +185,15 @@ class _NameListState extends State<NameList> {
             itemCount: this.widget.personlist.length),
       ),
       decoration: neodec,
-      margin: EdgeInsets.all(30),
+      margin: EdgeInsets.all(20),
     );
   }
 }
 
 class DrinkList extends StatefulWidget {
+  _MyAppState parent;
   List<DrinkTypes> availableDrinks;
-  DrinkList(this.availableDrinks);
+  DrinkList(this.availableDrinks, this.parent);
   @override
   _DrinkListState createState() => _DrinkListState();
 }
@@ -156,39 +203,52 @@ class _DrinkListState extends State<DrinkList> {
   Widget build(BuildContext context) {
     return Container(
         child: ListView.builder(
-            padding: EdgeInsets.all(30),
+            padding: EdgeInsets.only(bottom: 20, top: 10),
             physics: AlwaysScrollableScrollPhysics(),
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemCount: this.widget.availableDrinks.length,
             itemBuilder: (BuildContext context, int index) => Container(
                   padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Card(
-                    elevation: 0,
-                      color: neoback,
-                      child: Column(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 10,
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              child: Center(
-                                child: Container(
-                                  child: Image.asset("assets/" +
-                                      this
-                                          .widget
-                                          .availableDrinks[index]
-                                          .imageName),
+                  child: GestureDetector(
+                    child: Card(
+                        elevation: 0,
+                        color: neoback,
+                        child: Column(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 10,
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                child: Center(
+                                  child: Container(
+                                    child: Image.asset("assets/" +
+                                        this
+                                            .widget
+                                            .availableDrinks[index]
+                                            .imageName),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                              flex: 1,
-                              child: Text(
-                                  this.widget.availableDrinks[index].label))
-                        ],
-                      )),
+                            Expanded(
+                                flex: 1,
+                                child: Text(
+                                    this.widget.availableDrinks[index].label))
+                          ],
+                        )),
+                    onTap: () {
+                      this.widget.parent.setState(() {
+                        this.widget.parent.sel.add(
+                            this.widget.availableDrinks[index].id,
+                            this.widget.availableDrinks[index].label,
+                            this.widget.parent.selectedPerson.displayName);
+                        this.widget.parent.selectiontext =
+                            this.widget.parent.sel.getSelections();
+                        this.widget.parent.showSelection = true;
+                      });
+                    },
+                  ),
                   margin: EdgeInsets.symmetric(horizontal: 20),
                   decoration: neodec,
                   width: 200,
@@ -276,6 +336,7 @@ class _DetailviewState extends State<Detailview> {
               width: 700,
               child: SingleChildScrollView(
                 child: DataTable(
+                  headingRowHeight: 22,
                   columns: [
                     DataColumn(
                         label: Text(

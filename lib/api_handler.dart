@@ -88,6 +88,40 @@ class ConsumedDrinksByDrinkType {
   }
 }
 
+class Selections {
+  List<String> displaynames = [];
+  List<int> ids = [];
+  List<String> personnames = [];
+  Selections() {}
+  void add(int id, String displayname, String personname) {
+    this.displaynames.add(displayname);
+    this.ids.add(id);
+    this.personnames.add(personname);
+  }
+
+  String getSelections() {
+    String selectionstring = "";
+    if (this.displaynames.length == 0) {
+      return selectionstring;
+    } else {
+      for (var i = 0; i < this.displaynames.length; i++) {
+        selectionstring +=
+            this.personnames[i] + ":" + " " + this.displaynames[i] + ",   ";
+      }
+      return selectionstring;
+    }
+    ;
+  }
+
+  applySelection() {}
+
+  discardSelection() {
+    this.displaynames.clear();
+    this.ids.clear();
+    this.personnames.clear();
+  }
+}
+
 Future<List<DrinkTypes>> fetchDrinkList() async {
   List<DrinkTypes> myDrinks;
 
