@@ -2,6 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+const endpoint_consume = 'http://localhost:8080/api/consume';
+const endpoint_drinkTypes = 'http://localhost:8080/api/drinkTypes';
+const endpoint_persons = 'http://localhost:8080/api/persons';
+
 class DrinkTypes {
   int id;
   String label;
@@ -92,11 +96,13 @@ class Selections {
   List<String> displaynames = [];
   List<int> ids = [];
   List<String> personnames = [];
+  List<int> personids = [];
   Selections() {}
-  void add(int id, String displayname, String personname) {
+  void add(int personid, int id, String displayname, String personname) {
     this.displaynames.add(displayname);
     this.ids.add(id);
     this.personnames.add(personname);
+    this.personids.add(personid);
   }
 
   String getSelections() {
@@ -113,9 +119,32 @@ class Selections {
     ;
   }
 
-  applySelection() {}
+  applySelection() async {
+    var now = new DateTime.now();
+    var timestamp = now.toUtc().toIso8601String();
+    List consumptionlist = [];
+
+    for (var i = 0; i < personids.length; i++)
+      consumptionlist.add({
+        "personId": this.personids[i],
+        "drinkTypeId": this.ids[i],
+      });
+    var body = json.encode({
+      "timestamp": timestamp,
+      "consumptions": consumptionlist
+    });
+    http.post(
+      endpoint_consume,
+      body: body,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    discardSelection();
+  }
 
   discardSelection() {
+    this.personids.clear();
     this.displaynames.clear();
     this.ids.clear();
     this.personnames.clear();
@@ -125,7 +154,7 @@ class Selections {
 Future<List<DrinkTypes>> fetchDrinkList() async {
   List<DrinkTypes> myDrinks;
 
-  final response = await http.get('http://localhost:8080/api/drinkTypes');
+  final response = await http.get(endpoint_drinkTypes);
   myDrinks = (json.decode(response.body) as List)
       .map((i) => DrinkTypes.fromJson(i))
       .toList();
@@ -143,12 +172,13 @@ Future<List<DrinkTypes>> fetchDrinkList() async {
 Future<List<Person>> fetchPersonList() async {
   List<Person> personlist;
 
-  final response = await http.get('http://localhost:8080/api/persons');
+  final response = await http.get(endpoint_persons);
   personlist = (json.decode(response.body) as List)
       .map((i) => Person.fromJson(i))
       .toList();
 
   if (response.statusCode == 200) {
+    print("Fetching succesfull");
     // If the server did return a 200 OK response, then parse the JSON.
     return personlist;
   } else {

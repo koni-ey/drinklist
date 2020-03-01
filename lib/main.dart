@@ -83,7 +83,10 @@ class _MyAppState extends State<MyApp> {
                       }
 
                       // By default, show a loading spinner.
-                      return CircularProgressIndicator();
+                      return Center(
+                          child: CircularProgressIndicator(
+                        backgroundColor: neoacc,
+                      ));
                     })),
             Expanded(
                 flex: 2,
@@ -102,7 +105,10 @@ class _MyAppState extends State<MyApp> {
                               }
 
                               // By default, show a loading spinner.
-                              return CircularProgressIndicator();
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                backgroundColor: neoacc,
+                              ));
                             })),
                     AnimatedContainer(
                         decoration: neodecaccent,
@@ -119,10 +125,11 @@ class _MyAppState extends State<MyApp> {
                           children: <Widget>[
                             Expanded(
                                 flex: 12,
-                                child: ListView(
-                                    children:<Widget>[Text("Auswahl",style: selectionHead),
-                                      Text("" + sel.getSelections(),
-                                        style: selectionText)])),
+                                child: ListView(children: <Widget>[
+                                  Text("Auswahl", style: selectionHead),
+                                  Text("" + sel.getSelections(),
+                                      style: selectionText)
+                                ])),
                             Expanded(
                               flex: 1,
                               child: FlatButton(
@@ -141,6 +148,7 @@ class _MyAppState extends State<MyApp> {
                                   onPressed: () {
                                     this.setState(() {
                                       sel.applySelection();
+                                      personfuture = fetchPersonList();
                                       showSelection = false;
                                     });
                                   },
@@ -240,6 +248,7 @@ class _DrinkListState extends State<DrinkList> {
                     onTap: () {
                       this.widget.parent.setState(() {
                         this.widget.parent.sel.add(
+                            this.widget.parent.selectedPerson.id,
                             this.widget.availableDrinks[index].id,
                             this.widget.availableDrinks[index].label,
                             this.widget.parent.selectedPerson.displayName);
@@ -278,14 +287,16 @@ class _DetailviewState extends State<Detailview> {
                 .consumedDrinksByDrinkType[i]
                 .drinkTypeLabel,
             style: tabletext)),
-        DataCell(Text(
-          this
-              .widget
-              .currentPerson
-              .consumedDrinksByDrinkType[i]
-              .consumedDrinkCount
-              .toString(),
-          style: tabletext,
+        DataCell(Center(
+          child: Text(
+            this
+                .widget
+                .currentPerson
+                .consumedDrinksByDrinkType[i]
+                .consumedDrinkCount
+                .toString(),
+            style: tabletext,
+          ),
         ))
       ]));
     }
@@ -333,9 +344,11 @@ class _DetailviewState extends State<Detailview> {
         Expanded(
           flex: 3,
           child: Container(
-              width: 700,
+              margin: EdgeInsets.only(right:20),
+              width: 800,
               child: SingleChildScrollView(
                 child: DataTable(
+                  horizontalMargin: 50,
                   headingRowHeight: 22,
                   columns: [
                     DataColumn(
@@ -344,10 +357,14 @@ class _DetailviewState extends State<Detailview> {
                       style: tablehead,
                     )),
                     DataColumn(
-                        label: Text(
-                      'Anzahl',
+                        label: Expanded(
+                                                  child: Center(
+                            child: Text(
+                      '  Anzahl',
                       style: tablehead,
-                    ))
+                    ),
+                          ),
+                        ))
                   ],
                   rows: generateRows(),
                   columnSpacing: 400,

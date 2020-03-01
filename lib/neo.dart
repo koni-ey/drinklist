@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Color neoback = Color(0xFFF6F6F6);
+Color neoacc = Color(0xC104583E);
 
 BoxDecoration neodec = BoxDecoration(
     color: Color.fromRGBO(246, 246, 246, 1),
