@@ -5,23 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'neo.dart';
 import 'const.dart';
 import 'api_handler.dart';
-
-final snackBar = SnackBar(
-  backgroundColor: Colors.indigo,
-  content: Row(
-    children: <Widget>[
-      Expanded(
-          child: Text('1 Bier',
-              style: GoogleFonts.montserrat(
-                  fontSize: 40, fontWeight: FontWeight.w600, color: neoback))),
-      NeoButton(
-        child: Text("OK"),
-        onPressed: null,
-      )
-    ],
-  ),
-  behavior: SnackBarBehavior.fixed,
-);
+import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -37,19 +21,6 @@ class _MyAppState extends State<MyApp> {
   Future<List<DrinkTypes>> availableDrinks;
   Future<List<Person>> personfuture;
   bool showSelection = false;
-
-  Widget loadDetailview(Person selectedPerson) {
-    if (selectedPerson != null) {
-      return Detailview(selectedPerson);
-    } else {
-      return Center(
-          child: Text(
-        "Bitte wähle deinen Namen aus :)",
-        style: pleaseTap,
-      ));
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -92,7 +63,7 @@ class _MyAppState extends State<MyApp> {
                 flex: 2,
                 child: Column(
                   children: <Widget>[
-                    Expanded(flex: 5, child: loadDetailview(selectedPerson)),
+                    Expanded(flex: 5, child: Detailview(selectedPerson, this)),
                     Expanded(
                         flex: 4,
                         child: FutureBuilder<List<DrinkTypes>>(
@@ -146,10 +117,14 @@ class _MyAppState extends State<MyApp> {
                                 child: NeoButton(
                                   child: Icon(Icons.check),
                                   onPressed: () {
-                                    this.setState(() {
-                                      sel.applySelection();
-                                      personfuture = fetchPersonList();
-                                      showSelection = false;
+                                    Future.delayed(
+                                        const Duration(milliseconds: 1000), () {
+                                      this.setState(() {
+                                        sel.applySelection();
+                                        personfuture = fetchPersonList();
+                                        showSelection = false;
+                                        
+                                      });
                                     });
                                   },
                                 )),
@@ -185,7 +160,7 @@ class _NameListState extends State<NameList> {
                 onTap: () {
                   this.widget.parent.setState(() {
                     this.widget.parent.selectedPerson =
-                        this.widget.personlist[index];
+                        widget.personlist[index];
                   });
                 },
               );
@@ -267,8 +242,9 @@ class _DrinkListState extends State<DrinkList> {
 }
 
 class Detailview extends StatefulWidget {
+  _MyAppState parent;
   Person currentPerson;
-  Detailview(this.currentPerson);
+  Detailview(this.currentPerson, this.parent);
   @override
   _DetailviewState createState() => _DetailviewState();
 }
@@ -344,7 +320,7 @@ class _DetailviewState extends State<Detailview> {
         Expanded(
           flex: 3,
           child: Container(
-              margin: EdgeInsets.only(right:20),
+              margin: EdgeInsets.only(right: 20),
               width: 800,
               child: SingleChildScrollView(
                 child: DataTable(
@@ -358,13 +334,13 @@ class _DetailviewState extends State<Detailview> {
                     )),
                     DataColumn(
                         label: Expanded(
-                                                  child: Center(
-                            child: Text(
-                      '  Anzahl',
-                      style: tablehead,
-                    ),
-                          ),
-                        ))
+                      child: Center(
+                        child: Text(
+                          '  Anzahl',
+                          style: tablehead,
+                        ),
+                      ),
+                    ))
                   ],
                   rows: generateRows(),
                   columnSpacing: 400,
