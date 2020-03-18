@@ -97,7 +97,6 @@ class Selections {
   List<int> ids = [];
   List<String> personnames = [];
   List<int> personids = [];
-  Selections() {}
   void add(int personid, int id, String displayname, String personname) {
     this.displaynames.add(displayname);
     this.ids.add(id);
@@ -116,7 +115,6 @@ class Selections {
       }
       return selectionstring;
     }
-    ;
   }
 
   applySelection() async {
@@ -129,10 +127,8 @@ class Selections {
         "personId": this.personids[i],
         "drinkTypeId": this.ids[i],
       });
-    var body = json.encode({
-      "timestamp": timestamp,
-      "consumptions": consumptionlist
-    });
+    var body =
+        json.encode({"timestamp": timestamp, "consumptions": consumptionlist});
     http.post(
       endpoint_consume,
       body: body,

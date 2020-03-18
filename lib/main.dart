@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'neo.dart';
 import 'const.dart';
 import 'api_handler.dart';
-import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,13 +18,23 @@ class _MyAppState extends State<MyApp> {
   Selections sel = new Selections();
   String selectiontext = "";
   Future<List<DrinkTypes>> availableDrinks;
-  Future<List<Person>> personfuture;
   bool showSelection = false;
   @override
   void initState() {
     super.initState();
     availableDrinks = fetchDrinkList();
-    personfuture = fetchPersonList();
+  }
+
+  Widget loadDetailview(Person selectedPerson) {
+    if (selectedPerson != null) {
+      return Detailview(selectedPerson, this);
+    } else {
+      return Center(
+          child: Text(
+        "Bitte wähle deinen Namen aus :)",
+        style: pleaseTap,
+      ));
+    }
   }
 
   @override
@@ -44,26 +53,24 @@ class _MyAppState extends State<MyApp> {
           children: [
             Expanded(
                 flex: 1,
-                child: FutureBuilder<List<Person>>(
-                    future: personfuture,
-                    builder: (context, snapshot) {
+                child: StreamBuilder<List<Person>>(
+                    stream: getPersonList(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Person>> snapshot) {
                       if (snapshot.hasData) {
                         return NameList(snapshot.data, this);
-                      } else if (snapshot.hasError) {
-                        return Text("${snapshot.error}");
+                      } else {
+                        return Center(
+                            child: CircularProgressIndicator(
+                          backgroundColor: neoacc,
+                        ));
                       }
-
-                      // By default, show a loading spinner.
-                      return Center(
-                          child: CircularProgressIndicator(
-                        backgroundColor: neoacc,
-                      ));
                     })),
             Expanded(
                 flex: 2,
                 child: Column(
                   children: <Widget>[
-                    Expanded(flex: 5, child: Detailview(selectedPerson, this)),
+                    Expanded(flex: 5, child: loadDetailview(selectedPerson)),
                     Expanded(
                         flex: 4,
                         child: FutureBuilder<List<DrinkTypes>>(
@@ -113,21 +120,17 @@ class _MyAppState extends State<MyApp> {
                                   child: Icon(Icons.do_not_disturb)),
                             ),
                             Expanded(
-                                flex: 1,
-                                child: NeoButton(
+                              flex: 1,
+                              child: NeoButton(
                                   child: Icon(Icons.check),
                                   onPressed: () {
-                                    Future.delayed(
-                                        const Duration(milliseconds: 1000), () {
-                                      this.setState(() {
-                                        sel.applySelection();
-                                        personfuture = fetchPersonList();
-                                        showSelection = false;
-                                        
-                                      });
+                                    this.setState(() {
+                                      sel.applySelection();
+                                      selectedPerson = null;
+                                      showSelection = false;
                                     });
-                                  },
-                                )),
+                                  }),
+                            ),
                           ],
                         )),
                   ],
@@ -349,5 +352,14 @@ class _DetailviewState extends State<Detailview> {
         )
       ],
     ));
+  }
+}
+
+Stream<List<Person>> getPersonList() async* {
+  List<Person> personlist;
+  while (true) {
+    await Future.delayed(Duration(seconds: 2));
+    personlist = await fetchPersonList();
+    yield personlist;
   }
 }

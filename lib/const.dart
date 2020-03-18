@@ -11,7 +11,6 @@ final detailName = GoogleFonts.montserrat(
 final pleaseTap = GoogleFonts.montserrat(
     fontSize: 30, fontWeight: FontWeight.w700, color: Colors.black54);
 
-
 final TextStyle selectionHead = GoogleFonts.montserrat(
     fontSize: 14, fontWeight: FontWeight.w500, color: Colors.white70);
 
