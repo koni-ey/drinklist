@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
 const endpoint_consume = 'http://localhost:8080/api/consume';
 const endpoint_drinkTypes = 'http://localhost:8080/api/drinkTypes';
 const endpoint_persons = 'http://localhost:8080/api/persons';
+const encoded_credentials_api_user = 'ZGxjbGllbnQ6Mkh4OGdkOW5rRVJ1ZkMzNEtUVVlQd0JjWjNUV1JwQTc=';
 
 class DrinkTypes {
   int id;
@@ -132,9 +134,9 @@ class Selections {
     http.post(
       endpoint_consume,
       body: body,
-      headers: <String, String>{
+      headers: withAuthenticationHeader(<String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-      },
+      }),
     );
     discardSelection();
   }
@@ -150,7 +152,7 @@ class Selections {
 Future<List<DrinkTypes>> fetchDrinkList() async {
   List<DrinkTypes> myDrinks;
 
-  final response = await http.get(endpoint_drinkTypes);
+  final response = await http.get(endpoint_drinkTypes, headers: withAuthenticationHeader({}));
   myDrinks = (json.decode(response.body) as List)
       .map((i) => DrinkTypes.fromJson(i))
       .toList();
@@ -168,7 +170,7 @@ Future<List<DrinkTypes>> fetchDrinkList() async {
 Future<List<Person>> fetchPersonList() async {
   List<Person> personlist;
 
-  final response = await http.get(endpoint_persons);
+  final response = await http.get(endpoint_persons, headers: withAuthenticationHeader({}));
   personlist = (json.decode(response.body) as List)
       .map((i) => Person.fromJson(i))
       .toList();
@@ -182,4 +184,9 @@ Future<List<Person>> fetchPersonList() async {
 
     throw Exception('Data couldnt be fetched! (Personlist)');
   }
+}
+
+Map<String, String> withAuthenticationHeader(Map<String, String> headers) {
+  headers.putIfAbsent(HttpHeaders.authorizationHeader, () => "Basic $encoded_credentials_api_user");
+  return headers;
 }
