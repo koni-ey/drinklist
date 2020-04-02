@@ -1,12 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:global_configuration/global_configuration.dart';
 import 'package:http/http.dart' as http;
-
-const endpoint_consume = 'http://localhost:8080/api/consume';
-const endpoint_drinkTypes = 'http://localhost:8080/api/drinkTypes';
-const endpoint_persons = 'http://localhost:8080/api/persons';
-const encoded_credentials_api_user = 'ZGxjbGllbnQ6Mkh4OGdkOW5rRVJ1ZkMzNEtUVVlQd0JjWjNUV1JwQTc=';
 
 class DrinkTypes {
   int id;
@@ -131,8 +127,9 @@ class Selections {
       });
     var body =
         json.encode({"timestamp": timestamp, "consumptions": consumptionlist});
+    final endpointConsume = GlobalConfiguration().getString("endpoint_consume");
     http.post(
-      endpoint_consume,
+      endpointConsume,
       body: body,
       headers: withAuthenticationHeader(<String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -152,7 +149,8 @@ class Selections {
 Future<List<DrinkTypes>> fetchDrinkList() async {
   List<DrinkTypes> myDrinks;
 
-  final response = await http.get(endpoint_drinkTypes, headers: withAuthenticationHeader({}));
+  final endpointDrinkTypes = GlobalConfiguration().getString("endpoint_drinkTypes");
+  final response = await http.get(endpointDrinkTypes, headers: withAuthenticationHeader({}));
   myDrinks = (json.decode(response.body) as List)
       .map((i) => DrinkTypes.fromJson(i))
       .toList();
@@ -170,7 +168,8 @@ Future<List<DrinkTypes>> fetchDrinkList() async {
 Future<List<Person>> fetchPersonList() async {
   List<Person> personlist;
 
-  final response = await http.get(endpoint_persons, headers: withAuthenticationHeader({}));
+  final endpointPersons = GlobalConfiguration().getString("endpoint_persons");
+  final response = await http.get(endpointPersons, headers: withAuthenticationHeader({}));
   personlist = (json.decode(response.body) as List)
       .map((i) => Person.fromJson(i))
       .toList();
@@ -187,6 +186,7 @@ Future<List<Person>> fetchPersonList() async {
 }
 
 Map<String, String> withAuthenticationHeader(Map<String, String> headers) {
-  headers.putIfAbsent(HttpHeaders.authorizationHeader, () => "Basic $encoded_credentials_api_user");
+  final encodedCredentialsApiUser = GlobalConfiguration().getString("encoded_credentials_api_user");
+  headers.putIfAbsent(HttpHeaders.authorizationHeader, () => "Basic $encodedCredentialsApiUser");
   return headers;
 }

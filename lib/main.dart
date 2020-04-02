@@ -1,12 +1,22 @@
 import 'package:drinklist/const.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'config/app_config.custom.dart';
+import 'config/app_config.default.dart';
 import 'neo.dart';
 import 'const.dart';
 import 'api_handler.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // load default settings
+  GlobalConfiguration().loadFromMap(appDefaultSettings);
+  // load custom settings (see comments in lib/config/app_config.custom.dart for how to overwrite settings)
+  GlobalConfiguration().loadFromMap(appCustomSettings);
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
