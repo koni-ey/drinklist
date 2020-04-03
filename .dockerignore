@@ -1,0 +1,9 @@
+.vscode
+android
+build
+ios
+test
+.packages
+
+# exclude screenshot at the top level
+*.png
