@@ -19,7 +19,7 @@ RUN flutter channel beta && \
 RUN mkdir /usr/local/drinklist
 COPY . /usr/local/drinklist
 # copy custom config if available
-COPY custom_config/** /usr/local/drinklist/lib/config
+COPY custom_config/** /usr/local/drinklist/lib/config/
 WORKDIR /usr/local/drinklist
 RUN flutter build web
 
